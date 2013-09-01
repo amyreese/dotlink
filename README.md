@@ -55,7 +55,7 @@ advanced
 --------
 
 If you'd like to embed Dotlink within your dotfile repository,
-`dotfile/dotfile.py` is a self-contained script, specifically to allow for this
+`dotlink/dotlink.py` is a self-contained script, specifically to allow for this
 use case.  Simply copy dotfile.py into your repository; its only external
 dependency beyond core Python is the PyYAML library.
 
