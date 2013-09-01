@@ -63,5 +63,7 @@ dependency beyond core Python is the PyYAML library.
 legal
 -----
 
-Dotlink is copyright 2013 John Reese.  It is licensed under the MIT license.
+Dotlink is copyright 2013 John Reese.
+
+Dotlink is licensed under the MIT license.
 See the `LICENSE` file for more details.
