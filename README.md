@@ -51,6 +51,15 @@ If you don't give a target path, Dotlink will assume you want to deploy to your
 home directory; this works for remote targets too.
 
 
+advanced
+--------
+
+If you'd like to embed Dotlink within your dotfile repository,
+`dotfile/dotfile.py` is a self-contained script, specifically to allow for this
+use case.  Simply copy dotfile.py into your repository; its only external
+dependency beyond core Python is the PyYAML library.
+
+
 legal
 -----
 
