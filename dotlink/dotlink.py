@@ -11,10 +11,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import yaml
 
 from os import path
-
 
 class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
@@ -134,6 +132,8 @@ class Dotlink(object):
             self.log.exception('Profile deploy failed')
 
     def load_dotfiles(self):
+        import yaml # do this here so that setup.py can import dotlink.VERSION
+
         if self.args.map and path.exists(self.args.map):
             dotfiles_path = self.args.map
         else:
