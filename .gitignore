@@ -10,13 +10,13 @@ dist
 build
 eggs
 parts
-bin
 var
 sdist
 develop-eggs
 .installed.cfg
 lib
 lib64
+README
 
 # Installer logs
 pip-log.txt
