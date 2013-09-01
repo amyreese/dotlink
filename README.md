@@ -51,6 +51,17 @@ If you don't give a target path, Dotlink will assume you want to deploy to your
 home directory; this works for remote targets too.
 
 
+todo
+----
+
+Some planned features and changes are:
+
+- Drop dependency on PyYAML and just use a custom parser
+- Rework --source as positional parameter that defaults to $CWD
+- Add support for remote sources, like ssh/scp, but also git repos or tarballs
+- Generate mapping file from repository contents ?
+
+
 advanced
 --------
 
