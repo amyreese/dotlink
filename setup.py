@@ -1,5 +1,8 @@
 from setuptools import setup
 
+from os import path
+import shutil
+
 import dotlink
 
 if path.isfile('README.md'):
