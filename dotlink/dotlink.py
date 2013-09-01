@@ -14,6 +14,8 @@ import tempfile
 
 from os import path
 
+VERSION = '0.1.1'
+
 class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
     either a local path or a remote path accessible via ssh/scp.
