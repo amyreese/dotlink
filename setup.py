@@ -25,12 +25,6 @@ setup(name='Dotlink',
                    'Development Status :: 4 - Beta',
                    ],
       license='MIT License',
-      install_requires=[
-                        'PyYAML>=3.10',
-                        ],
-      requires=[
-                'PyYAML (>=3.10)',
-                ],
       packages=['dotlink'],
       scripts=['bin/dotlink'],
       )

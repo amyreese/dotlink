@@ -14,7 +14,7 @@ import tempfile
 
 from os import path
 
-VERSION = '0.1.1'
+VERSION = '0.2.0'
 
 class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
@@ -90,6 +90,42 @@ class Dotlink(object):
 
         return log
 
+    @staticmethod
+    def parse_mapping(filename):
+        """Do a simple parse of the dotfile mapping, using semicolons to
+        separate source file name from the target file paths."""
+        mapping_re = r'^("[^"]+"|\'[^\']+\'|[^\'":]+)\s*(?::\s*(.*)\s*)?$'
+        mapping_re = re.compile(mapping_re)
+        dotfiles = {}
+        lineno = 0
+
+        with open(filename) as fh:
+            for line in fh:
+                lineno += 1
+                content = line.strip()
+
+                if not content or content.startswith('#'):
+                    # comment line or empty line
+                    continue
+
+                match = mapping_re.match(content)
+                if match:
+                    source_path, target_path = match.groups()
+                    source_path = source_path.strip('\'"')
+
+                    if source_path in dotfiles:
+                        log.warning('Duplicate dotfile source "%s" on line #%d',
+                                    lineno)
+                        continue
+
+                    dotfiles[source_path] = target_path
+
+                else:
+                    log.warning('Dotfile mapping regex failed on line #%d',
+                                lineno)
+
+        return dotfiles
+
     def sh(self, *command, **kwargs):
         """Run a shell command with the given arguments."""
         self.log.debug('shell: %s', ' '.join(command))
@@ -141,20 +177,15 @@ class Dotlink(object):
 
     def load_dotfiles(self):
         """Read in the dotfile mapping as a dictionary."""
-        import yaml # do this here so that setup.py can import dotlink.VERSION
-
         if self.args.map and path.exists(self.args.map):
             dotfiles_path = self.args.map
         else:
             # try finding it in the source directory
-            dotfiles_path = path.join(self.source, 'dotfiles.yaml')
+            dotfiles_path = path.join(self.source, 'dotfiles')
 
         self.log.debug('Loading dotfile mapping from %s', dotfiles_path)
 
-        with open(dotfiles_path) as fh:
-            dotfiles = yaml.load(fh)
-            self.log.debug('Found %d dotfile mappings', len(dotfiles))
-            return dotfiles
+        return Dotlink.parse_mapping(dotfiles_path)
 
     def deploy_dotfiles(self, dotfiles):
         """Deploy dotfiles using the appropriate method."""

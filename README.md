@@ -4,7 +4,7 @@ dotlink
 Dotlink is a simple script to automate deploying an arbitrary set of "dotfiles"
 from a repository to either a local path or even a remote host using ssh/scp.
 
-Dotlink does not manage the dotfiles themselves, but uses a simple YAML file
+Dotlink does not manage the dotfiles themselves, but uses a simple text file
 mapping dotfile names in the repository to their ultimate location relative to
 the target path.  This allows you to have files without the dot prefix, for
 instance, or avoid replicating deep directory structures to track a single file.
@@ -26,16 +26,18 @@ usage
 -----
 
 You'll first need to create a mapping file in the root of your dotfile
-repository name "dotfiles.yaml", containing a root-level dictionary where keys
-are the file name in the repository, and the values are the path and filename
-relative to your home directory that the files will be installed to.
+repository named "dotfiles", following this format:
+
+- Each line contains the local repository filename, optionally followed by
+  a colon and the target filename if different than the local filename.
+- Comments are denoted by lines beginning with the `#` symbol, and are ignored.
 
 An example mapping might look like:
 
-    # dotfiles.yaml
+    # dotfiles
     aliases: .alias
-    bashrc: .bashrc
-    profile: .profile
+    .bashrc
+    .profile: .profile
     htop: .config/htop/htoprc
     vim: .vim
     vimrc: .vimrc
@@ -56,7 +58,6 @@ todo
 
 Some planned features and changes are:
 
-- Drop dependency on PyYAML and just use a custom parser
 - Rework --source as positional parameter that defaults to $CWD
 - Add support for remote sources, like ssh/scp, but also git repos or tarballs
 - Generate mapping file from repository contents ?
@@ -67,8 +68,8 @@ advanced
 
 If you'd like to embed Dotlink within your dotfile repository,
 `dotlink/dotlink.py` is a self-contained script, specifically to allow for this
-use case.  Simply copy dotfile.py into your repository; its only external
-dependency beyond core Python is the PyYAML library.
+use case.  Simply copy dotfile.py into your repository; it has no external
+dependencies.
 
 
 legal
