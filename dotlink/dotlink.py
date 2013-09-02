@@ -91,6 +91,7 @@ class Dotlink(object):
         return log
 
     def sh(self, *command, **kwargs):
+        """Run a shell command with the given arguments."""
         self.log.debug('shell: %s', ' '.join(command))
         return subprocess.check_call(' '.join(command), stdout=sys.stdout,
                                                         stderr=sys.stderr,
@@ -98,6 +99,7 @@ class Dotlink(object):
                                                         shell=True, **kwargs)
 
     def ssh(self, *command):
+        """Run an ssh command using the configured user/server values."""
         if self.args.user:
             ssh_spec = '{0}@{1}'.format(self.args.user, self.args.server)
         else:
@@ -106,6 +108,7 @@ class Dotlink(object):
         return self.sh('ssh', ssh_spec, *command)
 
     def scp(self, local_file, remote_path=''):
+        """Copy a local file to the given remote path."""
         if self.args.user:
             upload_spec = '{0}@{1}:{2}'.format(self.args.user,
                                                self.args.server,
@@ -120,6 +123,7 @@ class Dotlink(object):
         self.log = Dotlink.setup_logger(self.args)
 
     def run(self):
+        """Start the dotfile deployment process."""
         script = path.realpath(__file__)
         self.log.debug('Running from %s with arguments: %s', script, self.args)
 
@@ -136,6 +140,7 @@ class Dotlink(object):
             self.log.exception('Profile deploy failed')
 
     def load_dotfiles(self):
+        """Read in the dotfile mapping as a dictionary."""
         import yaml # do this here so that setup.py can import dotlink.VERSION
 
         if self.args.map and path.exists(self.args.map):
@@ -152,12 +157,14 @@ class Dotlink(object):
             return dotfiles
 
     def deploy_dotfiles(self, dotfiles):
+        """Deploy dotfiles using the appropriate method."""
         if self.args.server:
             return self.deploy_remote(dotfiles)
         else:
             return self.deploy_local(dotfiles)
 
     def deploy_remote(self, dotfiles):
+        """Deploy dotfiles to a remote server."""
         try:
             tempdir_path = tempfile.mkdtemp()
             self.log.debug('Deploying to temp dir %s', tempdir_path)
@@ -188,6 +195,7 @@ class Dotlink(object):
                 os.unlink(tempfile_path)
 
     def deploy_local(self, dotfiles, target_root=None):
+        """Deploy dotfiles to a local path."""
         if target_root == None:
             target_root = self.args.path
 
