@@ -14,7 +14,7 @@ import tempfile
 
 from os import path
 
-VERSION = '0.2.0'
+VERSION = '0.3.0'
 
 class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
@@ -31,9 +31,9 @@ class Dotlink(object):
                             help='copy files rather than link')
         parser.add_argument('-m', '--map', type=str, default=None,
                             help='path to dotfile mapping YAML file')
-        parser.add_argument('-s', '--source', type=str, default=None,
-                            help='path to source dotfiles')
 
+        parser.add_argument('source', type=str, nargs='?', default='.',
+                            help='path to root of source dotfile repository')
         parser.add_argument('target', type=str, nargs='?', default=None,
                             help='target path for dotfiles; either a local path'
                                  ' or a remote ssh/scp path.  Examples:'
@@ -41,6 +41,24 @@ class Dotlink(object):
                                  ' user@server:some/path')
 
         args = parser.parse_args()
+
+        if args.map:
+            if not path.isfile(args.map):
+                parser.error('map file not found')
+            args.map = path.realpath(args.map)
+
+        if args.source:
+            # try to be nice and recognize if they're running from their source
+            # repository, and don't make them type "."" if they specify a target
+            if not args.target and path.isfile('dotfiles'):
+                args.target = args.source
+                args.source = '.'
+
+            elif not path.isdir(args.source):
+                parser.error('source dir not found')
+
+        if args.source:
+            args.source = path.realpath(args.source)
 
         if args.target:
             match = re.match(r'(?:(?:([a-zA-Z0-9]+)@)?([^:]+):)?((?:/?[^/])*)',
@@ -54,15 +72,10 @@ class Dotlink(object):
             args.user = None
             args.server = None
             args.path = os.path.expanduser('~')
+            args.target = args.path
 
         if args.server:
             args.copy = True
-
-        if args.map and not path.isfile(args.map):
-            parser.error('map file not found')
-
-        if args.source and not path.isdir(args.source):
-            parser.error('source dir not found')
 
         return args
 

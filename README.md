@@ -45,12 +45,14 @@ An example mapping might look like:
 Once the mapping is in place, run Dotlink, and tell it where you repository is,
 as well as where you want it to deploy to:
 
-    $ dotlink -s path/to/repository [[[user@]host:]path/to/target]
+    $ dotlink [path/to/repository] [[[user@]host:]path/to/target]
 
-Targets can include local paths, or remote paths accessible via ssh by
+The source path is optional; Dotlink will assume it's your current directory if
+it finds a `dotfiles` mapping file unless you specify otherwise.  The target
+path is also optional, and assumed to be your local home directory.
+
+Targets can also include local paths, or remote paths accessible via ssh by
 providing a hostname as well as username if different than your current login.
-If you don't give a target path, Dotlink will assume you want to deploy to your
-home directory; this works for remote targets too.
 
 
 todo
@@ -58,8 +60,7 @@ todo
 
 Some planned features and changes are:
 
-- Rework --source as positional parameter that defaults to $CWD
-- Add support for remote sources, like ssh/scp, but also git repos or tarballs
+- Add support for remote sources, like ssh/scp, as well as git repos or tarballs
 - Generate mapping file from repository contents ?
 
 
