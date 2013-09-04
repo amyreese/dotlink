@@ -234,7 +234,7 @@ class Dotlink(object):
             source_path = path.join(self.source, source_path)
             target_path = path.join(target_root, target_path)
 
-            if path.isfile(target_path):
+            if path.isfile(target_path) or path.islink(target_path):
                 self.log.debug('Removing existing file at %s', target_path)
                 os.unlink(target_path)
 
