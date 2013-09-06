@@ -209,6 +209,9 @@ class Dotlink(object):
 
     def deploy_remote(self, dotfiles):
         """Deploy dotfiles to a remote server."""
+        tempfile_path = None
+        tempdir_path = None
+
         try:
             tempdir_path = tempfile.mkdtemp()
             self.log.debug('Deploying to temp dir %s', tempdir_path)
@@ -231,10 +234,10 @@ class Dotlink(object):
             self.ssh(ssh_command)
 
         finally:
-            if path.isdir(tempdir_path):
+            if tempdir_path and path.isdir(tempdir_path):
                 self.log.debug('Removing temp dir %s', tempdir_path)
                 shutil.rmtree(tempdir_path)
-            if path.isfile(tempfile_path):
+            if tempfile_path and path.isfile(tempfile_path):
                 self.log.debug('Removing temp file %s', tempfile_path)
                 os.unlink(tempfile_path)
 
