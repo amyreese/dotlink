@@ -262,10 +262,12 @@ class Dotlink(object):
 
             if self.args.copy:
                 if path.isdir(source_path):
-                    self.log.debug('Copying file %s to %s', source_path, target_path)
+                    self.log.debug('Copying file %s to %s',
+                                   source_path, target_path)
                     shutil.copytree(source_path, target_path)
                 else:
-                    self.log.debug('Copying dir %s to %s', source_path, target_path)
+                    self.log.debug('Copying dir %s to %s',
+                                   source_path, target_path)
                     shutil.copy(source_path, target_path)
 
             else:
