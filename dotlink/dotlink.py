@@ -228,8 +228,13 @@ class Dotlink(object):
             self.log.debug('Uploading tarball to %s', upload_path)
             self.scp(tempfile_path, upload_path)
 
-            ssh_command = "'mkdir -p {0} && tar xf _profile_upload.tgz -C {0} "\
-                          "&& rm -f _profile_upload.tgz'".format(self.args.path)
+            if self.args.path:
+                ssh_command = "'mkdir -p {0} && "\
+                              "tar xf _profile_upload.tgz -C {0}; "\
+                              "rm -f _profile_upload.tgz'".format(self.args.path)
+            else:
+                ssh_command = "tar xf _profile_upload.tgz; "\
+                              "rm -f _profile_upload.tgz"
             self.log.debug('Using ssh to unpack tarball and clean up')
             self.ssh(ssh_command)
 
