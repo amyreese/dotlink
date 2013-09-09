@@ -131,6 +131,9 @@ class Dotlink(object):
                                     lineno)
                         continue
 
+                    if target_path is None:
+                        target_path = source_path
+
                     dotfiles[source_path] = target_path
 
                 else:
