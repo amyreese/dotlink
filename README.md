@@ -1,10 +1,10 @@
 dotlink
 =======
 
-Dotlink is a simple script to automate deploying an arbitrary set of "dotfiles"
+dotlink is a simple script to automate deploying an arbitrary set of "dotfiles"
 from a repository to either a local path or even a remote host using ssh/scp.
 
-Dotlink does not manage the dotfiles themselves, but uses a simple text file
+dotlink does not manage the dotfiles themselves, but uses a simple text file
 mapping dotfile names in the repository to their ultimate location relative to
 the target path.  This allows you to have files without the dot prefix, for
 instance, or avoid replicating deep directory structures to track a single file.
@@ -13,11 +13,11 @@ instance, or avoid replicating deep directory structures to track a single file.
 setup
 -----
 
-To install Dotlink system-wide:
+To install dotlink system-wide:
 
     # pip install dotlink
 
-Or if you want to hack on Dotlink a bit, clone the repo and run:
+Or if you want to hack on dotlink a bit, clone the repo and run:
 
     # python setup.py develop
 
@@ -50,12 +50,12 @@ An example mapping might look like:
     #include "repo2/dotfiles"
     #include "/full/patt/to/repo3/"
 
-Once the mapping is in place, run Dotlink, and tell it where your source
+Once the mapping is in place, run dotlink, and tell it where your source
 repository is, as well as where you want it to deploy to:
 
     $ dotlink [path/to/repository] [[[user@]host:]path/to/target]
 
-The source path is optional; Dotlink will assume it's your current directory if
+The source path is optional; dotlink will assume it's your current directory if
 it finds a `dotfiles` mapping file unless you specify otherwise.  The target
 path is also optional, and assumed to be your local home directory.
 
@@ -75,7 +75,7 @@ Some planned features and changes are:
 advanced
 --------
 
-If you'd like to embed Dotlink within your dotfile repository,
+If you'd like to embed dotlink within your dotfile repository,
 `dotlink/dotlink.py` is a self-contained script, specifically to allow for this
 use case.  Simply copy dotfile.py into your repository; it has no external
 dependencies.
@@ -84,7 +84,7 @@ dependencies.
 legal
 -----
 
-Dotlink is copyright 2013 John Reese.
+dotlink is copyright 2013 John Reese.
 
-Dotlink is licensed under the MIT license.
+dotlink is licensed under the MIT license.
 See the `LICENSE` file for more details.
