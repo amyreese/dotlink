@@ -14,7 +14,7 @@ import tempfile
 
 from os import path
 
-VERSION = '0.3.1'
+VERSION = '0.4.0'
 
 class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
