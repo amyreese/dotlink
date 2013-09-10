@@ -103,19 +103,58 @@ class Dotlink(object):
 
         return log
 
-    @staticmethod
-    def parse_mapping(filename):
+    def parse_mapping(self, map_path, source=None, dotfiles=None):
         """Do a simple parse of the dotfile mapping, using semicolons to
         separate source file name from the target file paths."""
-        mapping_re = r'^("[^"]+"|\'[^\']+\'|[^\'":]+)\s*(?::\s*(.*)\s*)?$'
+        include_re = r"""^\s*#include\s+(".+"|'.+')"""
+        include_re = re.compile(include_re, re.I)
+        mapping_re = r"""^("[^"]+"|\'[^\']+\'|[^\'":]+)\s*(?::\s*(.*)\s*)?$"""
         mapping_re = re.compile(mapping_re)
-        dotfiles = {}
+
+        filename = None
+        map_path = path.realpath(path.expanduser(map_path))
+
+        if path.isfile(map_path):
+            filename = map_path
+
+        elif path.isdir(map_path):
+            # try finding a mapping in the target directory
+            for map_name in '.dotfiles', 'dotfiles':
+                candidate = path.join(map_path, map_name)
+                if path.isfile(candidate):
+                    filename = candidate
+                    break
+
+        if filename is None:
+            raise ValueError('No dotfile mapping found in %s' % map_path)
+
+        if source is None:
+            source = path.dirname(map_path)
+
+        if dotfiles is None:
+            dotfiles = {}
+
         lineno = 0
 
         with open(filename) as fh:
             for line in fh:
                 lineno += 1
                 content = line.strip()
+
+                match = include_re.match(content)
+                if match:
+                    include_path = match.group(1).strip('\'"')
+                    include_path = path.realpath(path.expanduser(include_path))
+
+                    if path.exists(include_path):
+                        self.log.debug('Recursively parsing mapping in %s',
+                                       include_path)
+                        dotfiles = self.parse_mapping(include_path,
+                                                      dotfiles=dotfiles)
+                    else:
+                        self.log.warning('Include command points to file or '
+                                         'directory that does not exist, "%s", '
+                                         'on line %d', include_path, lineno)
 
                 if not content or content.startswith('#'):
                     # comment line or empty line
@@ -124,11 +163,11 @@ class Dotlink(object):
                 match = mapping_re.match(content)
                 if match:
                     source_path, target_path = match.groups()
-                    source_path = source_path.strip('\'"')
+                    source_path = path.join(source, source_path.strip('\'"'))
 
                     if source_path in dotfiles:
-                        log.warning('Duplicate dotfile source "%s" on line #%d',
-                                    lineno)
+                        self.log.warning('Duplicate dotfile source "%s" '
+                                         'on line #%d', lineno)
                         continue
 
                     if target_path is None:
@@ -137,8 +176,8 @@ class Dotlink(object):
                     dotfiles[source_path] = target_path
 
                 else:
-                    log.warning('Dotfile mapping regex failed on line #%d',
-                                lineno)
+                    self.log.warning('Dotfile mapping regex failed on line #%d',
+                                     lineno)
 
         return dotfiles
 
@@ -196,12 +235,11 @@ class Dotlink(object):
         if self.args.map and path.exists(self.args.map):
             dotfiles_path = self.args.map
         else:
-            # try finding it in the source directory
-            dotfiles_path = path.join(self.source, 'dotfiles')
+            dotfiles_path = self.source
 
         self.log.debug('Loading dotfile mapping from %s', dotfiles_path)
 
-        return Dotlink.parse_mapping(dotfiles_path)
+        return self.parse_mapping(dotfiles_path, source=self.source)
 
     def deploy_dotfiles(self, dotfiles):
         """Deploy dotfiles using the appropriate method."""

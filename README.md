@@ -26,15 +26,19 @@ usage
 -----
 
 You'll first need to create a mapping file in the root of your dotfile
-repository named "dotfiles", following this format:
+repository named `.dotfiles` (or just `dotfiles`), following this format:
 
 - Each line contains the local repository filename, optionally followed by
   a colon and the target filename if different than the local filename.
+- External dotfile mappings can be included using `#include "path/to/mapping"`,
+  and the requested map will be loaded as well.  The requested path can either
+  be an explicit filename, or a directory containing a mapping named `dotfiles`
+  or `.dotfiles`.
 - Comments are denoted by lines beginning with the `#` symbol, and are ignored.
 
 An example mapping might look like:
 
-    # dotfiles
+    # the dotfiles to care about
     aliases: .alias
     .bashrc
     .profile: .profile
@@ -42,8 +46,12 @@ An example mapping might look like:
     vim: .vim
     vimrc: .vimrc
 
-Once the mapping is in place, run Dotlink, and tell it where you repository is,
-as well as where you want it to deploy to:
+    # some external dotfile paths to include
+    #include "repo2/dotfiles"
+    #include "/full/patt/to/repo3/"
+
+Once the mapping is in place, run Dotlink, and tell it where your source
+repository is, as well as where you want it to deploy to:
 
     $ dotlink [path/to/repository] [[[user@]host:]path/to/target]
 
