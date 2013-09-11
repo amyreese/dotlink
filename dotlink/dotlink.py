@@ -25,6 +25,8 @@ class Dotlink(object):
     @staticmethod
     def parse_args():
         parser = argparse.ArgumentParser(description=Dotlink.__doc__)
+        parser.add_argument('-V', '--version', action='version',
+                            version='dotlink v%s' % VERSION)
         parser.add_argument('-d', '--debug', action='store_true', default=False,
                             help='enable debug output')
         parser.add_argument('-c', '--copy', action='store_true', default=False,
