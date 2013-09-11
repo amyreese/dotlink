@@ -15,7 +15,10 @@ instance, or avoid replicating deep directory structures to track a single file.
 setup
 -----
 
-To install dotlink system-wide:
+dotlink requires Python, either version 2.7 or versions 3.2 and newer.  No
+external libraries are required.
+
+To install dotlink system-wide or in a virtualenv:
 
     # pip install dotlink
 
