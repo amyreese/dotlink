@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 
+from collections import OrderedDict
 from os import path
 
 VERSION = '0.4.0'
@@ -134,7 +135,7 @@ class Dotlink(object):
             source = path.dirname(map_path)
 
         if dotfiles is None:
-            dotfiles = {}
+            dotfiles = OrderedDict()
 
         lineno = 0
 
