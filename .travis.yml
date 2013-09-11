@@ -1,6 +1,5 @@
 language: python
 python:
-    - "2.6"
     - "2.7"
     - "3.2"
     - "3.3"
@@ -8,7 +7,3 @@ python:
 script:
     - "pip install ."
     - "dotlink --debug --help"
-matrix:
-    allow_failures:
-        - python: "2.6"
-        - python: "pypy"
