@@ -9,6 +9,8 @@ mapping dotfile names in the repository to their ultimate location relative to
 the target path.  This allows you to have files without the dot prefix, for
 instance, or avoid replicating deep directory structures to track a single file.
 
+[![Build Status](https://travis-ci.org/jreese/dotlink.png?branch=master)](https://travis-ci.org/jreese/dotlink)
+
 
 setup
 -----
