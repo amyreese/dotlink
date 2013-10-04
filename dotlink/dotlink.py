@@ -15,7 +15,7 @@ import tempfile
 from collections import OrderedDict
 from os import path
 
-VERSION = '0.4.2'
+VERSION = '0.4.3'
 
 class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
@@ -147,7 +147,12 @@ class Dotlink(object):
                 match = include_re.match(content)
                 if match:
                     include_path = match.group(1).strip('\'"')
-                    include_path = path.realpath(path.expanduser(include_path))
+                    if (include_path.startswith('/') or
+                            include_path.startswith('~')):
+                        include_path = path.realpath(path.expanduser(include_path))
+                    else:
+                        include_path = path.join(path.dirname(filename),
+                                                 include_path)
 
                     if path.exists(include_path):
                         self.log.debug('Recursively parsing mapping in %s',
