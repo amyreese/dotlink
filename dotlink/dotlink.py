@@ -17,6 +17,7 @@ from os import path
 
 VERSION = '0.4.3'
 
+
 class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
     either a local path or a remote path accessible via ssh/scp.
@@ -28,8 +29,8 @@ class Dotlink(object):
         parser = argparse.ArgumentParser(description=Dotlink.__doc__)
         parser.add_argument('-V', '--version', action='version',
                             version='dotlink v%s' % VERSION)
-        parser.add_argument('-d', '--debug', action='store_true', default=False,
-                            help='enable debug output')
+        parser.add_argument('-d', '--debug', action='store_true',
+                            default=False, help='enable debug output')
         parser.add_argument('-c', '--copy', action='store_true', default=False,
                             help='copy files rather than link')
         parser.add_argument('-m', '--map', type=str, default=None,
@@ -38,8 +39,8 @@ class Dotlink(object):
         parser.add_argument('source', type=str, nargs='?', default='.',
                             help='path to root of source dotfile repository')
         parser.add_argument('target', type=str, nargs='?', default=None,
-                            help='target path for dotfiles; either a local path'
-                                 ' or a remote ssh/scp path.  Examples:'
+                            help='target path for dotfiles; either a local '
+                                 ' path or a remote ssh/scp path. Examples:'
                                  ' /home/user server:some/path'
                                  ' user@server:some/path')
 
@@ -52,7 +53,7 @@ class Dotlink(object):
 
         if args.source:
             # try to be nice and recognize if they're running from their source
-            # repository, and don't make them type "."" if they specify a target
+            # repository, and don't make them type "." if they specify a target
             if not args.target and path.isfile('dotfiles'):
                 args.target = args.source
                 args.source = '.'
@@ -149,7 +150,8 @@ class Dotlink(object):
                     include_path = match.group(1).strip('\'"')
                     if (include_path.startswith('/') or
                             include_path.startswith('~')):
-                        include_path = path.realpath(path.expanduser(include_path))
+                        include_path = path.realpath(
+                            path.expanduser(include_path))
                     else:
                         include_path = path.join(path.dirname(filename),
                                                  include_path)
@@ -161,8 +163,8 @@ class Dotlink(object):
                                                       dotfiles=dotfiles)
                     else:
                         self.log.warning('Include command points to file or '
-                                         'directory that does not exist, "%s", '
-                                         'on line %d', include_path, lineno)
+                                         'directory that does not exist, "%s",'
+                                         ' on line %d', include_path, lineno)
 
                 if not content or content.startswith('#'):
                     # comment line or empty line
@@ -184,18 +186,19 @@ class Dotlink(object):
                     dotfiles[source_path] = target_path
 
                 else:
-                    self.log.warning('Dotfile mapping regex failed on line #%d',
-                                     lineno)
+                    self.log.warning('Dotfile mapping regex failed on line '
+                                     '#%d', lineno)
 
         return dotfiles
 
     def sh(self, *command, **kwargs):
         """Run a shell command with the given arguments."""
         self.log.debug('shell: %s', ' '.join(command))
-        return subprocess.check_call(' '.join(command), stdout=sys.stdout,
-                                                        stderr=sys.stderr,
-                                                        stdin=sys.stdin,
-                                                        shell=True, **kwargs)
+        return subprocess.check_call(' '.join(command),
+                                     stdout=sys.stdout,
+                                     stderr=sys.stderr,
+                                     stdin=sys.stdin,
+                                     shell=True, **kwargs)
 
     def ssh(self, *command):
         """Run an ssh command using the configured user/server values."""
@@ -280,7 +283,8 @@ class Dotlink(object):
             if self.args.path:
                 ssh_command = "'mkdir -p {0} && "\
                               "tar xf _profile_upload.tgz -C {0}; "\
-                              "rm -f _profile_upload.tgz'".format(self.args.path)
+                              "rm -f _profile_upload.tgz'"\
+                              "".format(self.args.path)
             else:
                 ssh_command = "tar xf _profile_upload.tgz; "\
                               "rm -f _profile_upload.tgz"
@@ -297,7 +301,7 @@ class Dotlink(object):
 
     def deploy_local(self, dotfiles, target_root=None):
         """Deploy dotfiles to a local path."""
-        if target_root == None:
+        if target_root is None:
             target_root = self.args.path
 
         for source_path, target_path in dotfiles.items():
