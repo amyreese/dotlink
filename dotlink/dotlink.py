@@ -12,10 +12,15 @@ import subprocess
 import sys
 import tempfile
 
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
+
 from collections import OrderedDict
 from os import path
 
-VERSION = '0.4.3'
+VERSION = '0.5.0'
 
 
 class Dotlink(object):
@@ -35,6 +40,8 @@ class Dotlink(object):
                             help='copy files rather than link')
         parser.add_argument('-m', '--map', type=str, default=None,
                             help='path to dotfile mapping YAML file')
+        parser.add_argument('--git', action='store_true', default=False,
+                            help='treat the source path as a git repository')
 
         parser.add_argument('source', type=str, nargs='?', default='.',
                             help='path to root of source dotfile repository')
@@ -45,6 +52,7 @@ class Dotlink(object):
                                  ' user@server:some/path')
 
         args = parser.parse_args()
+        args.repo = False
 
         if args.map:
             if not path.isfile(args.map):
@@ -52,17 +60,26 @@ class Dotlink(object):
             args.map = path.realpath(args.map)
 
         if args.source:
+            # try to "guess" some basic/obvious source URI patterns
+            url = urlparse(args.source)
+            if url.scheme == 'git' or args.source.startswith('git@'):
+                args.git = True
+
+        if args.git:
+            args.repo = True
+        elif args.source:
+            args.source = path.realpath(args.source)
+
+        if args.source and not args.repo:
             # try to be nice and recognize if they're running from their source
             # repository, and don't make them type "." if they specify a target
-            if not args.target and path.isfile('dotfiles'):
+            if (not args.target and
+                    path.isfile('dotfiles') or path.isfile('.dotfiles')):
                 args.target = args.source
                 args.source = '.'
 
             elif not path.isdir(args.source):
                 parser.error('source dir not found')
-
-        if args.source:
-            args.source = path.realpath(args.source)
 
         if args.target:
             match = re.match(r'(?:(?:([a-zA-Z0-9]+)@)?([^:]+):)?((?:/?[^/])*)',
@@ -78,7 +95,7 @@ class Dotlink(object):
             args.path = os.path.expanduser('~')
             args.target = args.path
 
-        if args.server:
+        if args.server or args.repo:
             args.copy = True
 
         return args
@@ -237,9 +254,17 @@ class Dotlink(object):
         self.log.debug('Sourcing dotfiles from %s', self.source)
 
         try:
+            if self.args.repo:
+                self.clone_repo()
+
             self.deploy_dotfiles(self.load_dotfiles())
+
         except:
             self.log.exception('Profile deploy failed')
+
+        finally:
+            if self.args.repo:
+                self.cleanup_repo()
 
     def load_dotfiles(self):
         """Read in the dotfile mapping as a dictionary."""
@@ -251,6 +276,26 @@ class Dotlink(object):
         self.log.debug('Loading dotfile mapping from %s', dotfiles_path)
 
         return self.parse_mapping(dotfiles_path, source=self.source)
+
+    def clone_repo(self):
+        """Clone a repository containing the dotfiles source."""
+        tempdir_path = tempfile.mkdtemp()
+
+        if self.args.git:
+            self.log.debug('Cloning git source repository from %s to %s',
+                           self.source, tempdir_path)
+            self.sh('git clone', self.source, tempdir_path)
+
+        else:
+            raise NotImplementedError('Unknown repo type')
+
+        self.source = tempdir_path
+
+    def cleanup_repo(self):
+        """Cleanup the temporary directory containing the dotfiles repo."""
+        if self.source and path.isdir(self.source):
+            self.log.debug('Cleaning up source repo from %s', self.source)
+            shutil.rmtree(self.source)
 
     def deploy_dotfiles(self, dotfiles):
         """Deploy dotfiles using the appropriate method."""

@@ -61,9 +61,10 @@ repository is, as well as where you want it to deploy to:
     $ dotlink [path/to/repository] [[[user@]host:]path/to/target]
 
 The source path is optional; dotlink will assume it's your current directory if
-it finds a `dotfiles` mapping file unless you specify otherwise.  The target
+it finds a `.dotfiles` mapping file unless you specify otherwise.  The target
 path is also optional, and assumed to be your local home directory.
 
+Sources can include local paths or remote git repository URLs.
 Targets can also include local paths, or remote paths accessible via ssh by
 providing a hostname as well as username if different than your current login.
 
@@ -80,10 +81,35 @@ Some planned features and changes are:
 advanced
 --------
 
+### embedding
+
 If you'd like to embed dotlink within your dotfile repository,
 `dotlink/dotlink.py` is a self-contained script, specifically to allow for this
 use case.  Simply copy dotfile.py into your repository; it has no external
 dependencies.
+
+
+### remote sources
+
+Sources can also point at remote locations, such as git repositories, and
+dotlink will clone the remote data into a temporary path and then copy the
+contents into the appropriate paths.  dotlink will guess this if your source
+path begins with "git://" or "git@", but you can also use `--git` to force this
+for non-standard URLs.  The following command will clone my public dotfile repo,
+and install it to your home directory:
+
+    $ dotlink git://github.com/jreese/dotfiles
+
+This is essentially equivalent to the following sequence of commands:
+
+    $ git clone git://github.com/jreese/dotfiles
+    $ dotlink dotfiles
+    $ rm -rf dotfiles
+
+You can even combine remote sources with remote targets, to clone the dotfile
+repository locally, and then copy the dotfiles to the remote host via scp:
+
+    $ dotlink git://github.com/jreese/dotfiles jreese@devserver:
 
 
 legal
