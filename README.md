@@ -69,15 +69,6 @@ Targets can also include local paths, or remote paths accessible via ssh by
 providing a hostname as well as username if different than your current login.
 
 
-todo
-----
-
-Some planned features and changes are:
-
-- Add support for remote sources, like ssh/scp, as well as git repos or tarballs
-- Generate mapping file from repository contents ?
-
-
 advanced
 --------
 
@@ -110,6 +101,15 @@ You can even combine remote sources with remote targets, to clone the dotfile
 repository locally, and then copy the dotfiles to the remote host via scp:
 
     $ dotlink git://github.com/jreese/dotfiles jreese@devserver:
+
+
+todo
+----
+
+Some planned features and changes are:
+
+- Add support for remote sources, like ssh/scp, as well as git repos or tarballs
+- Generate mapping file from repository contents ?
 
 
 legal
