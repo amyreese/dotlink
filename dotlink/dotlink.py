@@ -20,7 +20,7 @@ except ImportError:
 from collections import OrderedDict
 from os import path
 
-VERSION = '0.5.0'
+VERSION = '0.6.0'
 
 
 class Dotlink(object):
@@ -40,6 +40,8 @@ class Dotlink(object):
                             help='copy files rather than link')
         parser.add_argument('-m', '--map', type=str, default=None,
                             help='path to dotfile mapping YAML file')
+        parser.add_argument('--rsync', action='store_true', default=False,
+                            help='use rsync rather than a tarball over scp')
         parser.add_argument('--git', action='store_true', default=False,
                             help='treat the source path as a git repository')
 
@@ -314,27 +316,44 @@ class Dotlink(object):
             self.log.debug('Deploying to temp dir %s', tempdir_path)
             self.deploy_local(dotfiles, target_root=tempdir_path)
 
-            fh, tempfile_path = tempfile.mkstemp(suffix='.tar.gz')
-            os.close(fh)
+            if self.args.rsync:
+                local_spec = tempdir_path.rstrip('/') + '/'
+                remote_spec = self.args.path.rstrip('/') + '/'
 
-            self.log.debug('Creating tar file %s', tempfile_path)
-            shutil.make_archive(tempfile_path.replace('.tar.gz', ''),
-                                'gztar', tempdir_path)
+                if self.args.user:
+                    remote_spec = "{0}@{1}:{2}".format(self.args.user,
+                                                       self.args.server,
+                                                       remote_spec)
+                else:
+                    remote_spec = "{0}:{1}".format(self.args.server,
+                                                   remote_spec)
 
-            upload_path = '_profile_upload.tgz'
-            self.log.debug('Uploading tarball to %s', upload_path)
-            self.scp(tempfile_path, upload_path)
+                self.log.debug('Using rsync to sync dotfiles to %s',
+                               remote_spec)
+                self.sh('rsync', '-az', local_spec, remote_spec)
 
-            if self.args.path:
-                ssh_command = "'mkdir -p {0} && "\
-                              "tar xf _profile_upload.tgz -C {0}; "\
-                              "rm -f _profile_upload.tgz'"\
-                              "".format(self.args.path)
             else:
-                ssh_command = "tar xf _profile_upload.tgz; "\
-                              "rm -f _profile_upload.tgz"
-            self.log.debug('Using ssh to unpack tarball and clean up')
-            self.ssh(ssh_command)
+                fh, tempfile_path = tempfile.mkstemp(suffix='.tar.gz')
+                os.close(fh)
+
+                self.log.debug('Creating tar file %s', tempfile_path)
+                shutil.make_archive(tempfile_path.replace('.tar.gz', ''),
+                                    'gztar', tempdir_path)
+
+                upload_path = '_profile_upload.tgz'
+                self.log.debug('Uploading tarball to %s', upload_path)
+                self.scp(tempfile_path, upload_path)
+
+                if self.args.path:
+                    ssh_command = "'mkdir -p {0} && "\
+                                  "tar xf _profile_upload.tgz -C {0}; "\
+                                  "rm -f _profile_upload.tgz'"\
+                                  "".format(self.args.path)
+                else:
+                    ssh_command = "tar xf _profile_upload.tgz; "\
+                                  "rm -f _profile_upload.tgz"
+                self.log.debug('Using ssh to unpack tarball and clean up')
+                self.ssh(ssh_command)
 
         finally:
             if tempdir_path and path.isdir(tempdir_path):
