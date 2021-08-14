@@ -301,7 +301,7 @@ class Dotlink(object):
 
             self.deploy_dotfiles(self.load_dotfiles())
 
-        except:
+        except Exception:
             self.log.exception("Profile deploy failed")
 
         finally:
