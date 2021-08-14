@@ -399,5 +399,8 @@ class Dotlink(object):
                 self.log.debug('Symlinking %s -> %s', target_path, source_path)
                 os.symlink(source_path, target_path)
 
-if __name__ == '__main__':
+def main():
     Dotlink().run()
+
+if __name__ == '__main__':
+    main()
