@@ -1,0 +1,6 @@
+attribution==1.5.2
+black==21.7b0
+flake8==3.9.2
+flit==3.3.0
+usort==0.6.2
+ufmt==1.2.1
