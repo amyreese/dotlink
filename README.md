@@ -9,10 +9,10 @@ mapping dotfile names in the repository to their ultimate location relative to
 the target path.  This allows you to have files without the dot prefix, for
 instance, or avoid replicating deep directory structures to track a single file.
 
+[![license](https://img.shields.io/pypi/l/dotlink.svg)](https://github.com/jreese/dotlink/blob/main/LICENSE)
+[![version](https://img.shields.io/pypi/v/dotlink.svg)](https://pypi.org/project/dotlink)
+[![changelog](https://img.shields.io/badge/change-log-blue)](https://github.com/jreese/dotlink/blob/main/CHANGELOG.md)
 [![build status](https://github.com/jreese/dotlink/workflows/Build/badge.svg)](https://github.com/jreese/dotlink/actions)
-[![code coverage](https://img.shields.io/codecov/c/gh/omnilib/aioitertools)](https://codecov.io/gh/omnilib/aioitertools)
-[![version](https://img.shields.io/pypi/v/aioitertools.svg)](https://pypi.org/project/aioitertools)
-[![license](https://img.shields.io/pypi/l/aioitertools.svg)](https://github.com/omnilib/aioitertools/blob/master/LICENSE)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
