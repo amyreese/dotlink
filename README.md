@@ -119,7 +119,7 @@ Some planned features and changes are:
 legal
 -----
 
-dotlink is copyright 2013 John Reese.
+dotlink is copyright [John Reese](https://jreese.sh).
 
 dotlink is licensed under the MIT license.
 See the `LICENSE` file for more details.
