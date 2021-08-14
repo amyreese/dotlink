@@ -1,6 +1,22 @@
 dotlink
 =======
 
+v1.0
+----
+
+Modern release
+
+- Built with flit with modern metadata, scripts, entrypoints
+- Formatted and linted with black, µsort, µfmt, and flake8
+- Changelog
+- Github actions
+
+```
+$ git shortlog -s v0.6.0...v1.0
+    14	John Reese
+```
+
+
 v0.6.0
 ------
 
@@ -116,5 +132,4 @@ No longer depends on YAML for parsing the dotfile mapping.
 $ git shortlog -s v0.2.0
     17	John Reese
 ```
-
 
