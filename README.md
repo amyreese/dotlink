@@ -9,22 +9,26 @@ mapping dotfile names in the repository to their ultimate location relative to
 the target path.  This allows you to have files without the dot prefix, for
 instance, or avoid replicating deep directory structures to track a single file.
 
-[![Build Status](https://travis-ci.org/jreese/dotlink.png?branch=master)](https://travis-ci.org/jreese/dotlink)
+[![build status](https://github.com/jreese/dotlink/workflows/Build/badge.svg)](https://github.com/jreese/dotlink/actions)
+[![code coverage](https://img.shields.io/codecov/c/gh/omnilib/aioitertools)](https://codecov.io/gh/omnilib/aioitertools)
+[![version](https://img.shields.io/pypi/v/aioitertools.svg)](https://pypi.org/project/aioitertools)
+[![license](https://img.shields.io/pypi/l/aioitertools.svg)](https://github.com/omnilib/aioitertools/blob/master/LICENSE)
+[![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
 setup
 -----
 
-dotlink requires Python, either version 2.7 or versions 3.2 and newer.  No
-external libraries are required.
+dotlink requires Python version 3.2 or newer.
+No external libraries are required.
 
-To install dotlink system-wide or in a virtualenv:
+To install dotlink:
 
-    # pip install dotlink
+    $ pip install dotlink
 
 Or if you want to hack on dotlink a bit, clone the repo and run:
 
-    # python setup.py develop
+    $ python setup.py develop
 
 
 usage
