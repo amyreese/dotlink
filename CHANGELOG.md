@@ -1,6 +1,17 @@
 dotlink
 =======
 
+v1.0.post0
+----------
+
+Fixed readme
+
+```
+$ git shortlog -s v1.0...v1.0.post0
+     2	John Reese
+```
+
+
 v1.0
 ----
 
