@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import argparse
 import logging
@@ -11,14 +8,9 @@ import shutil
 import subprocess
 import sys
 import tempfile
-
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
-
 from collections import OrderedDict
 from os import path
+from urllib.parse import urlparse
 
 from .__version__ import __version__ as VERSION
 
