@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "dotlink"
 authors = [
-    {name = "John Reese", email = "john@noswap.com"},
+    {name = "Amethyst Reese", email = "amy@noswap.com"},
 ]
 readme = "README.md"
 classifiers = [
@@ -21,8 +21,8 @@ dynamic = ["version", "description"]
 dotlink = "dotlink:main"
 
 [project.urls]
-home-page = "https://github.com/jreese/dotlink"
-Github = "https://github.com/jreese/dotlink"
+home-page = "https://github.com/amyreese/dotlink"
+Github = "https://github.com/amyreese/dotlink"
 
 [tool.flit.sdist]
 exclude = [

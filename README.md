@@ -9,10 +9,10 @@ mapping dotfile names in the repository to their ultimate location relative to
 the target path.  This allows you to have files without the dot prefix, for
 instance, or avoid replicating deep directory structures to track a single file.
 
-[![license](https://img.shields.io/pypi/l/dotlink.svg)](https://github.com/jreese/dotlink/blob/main/LICENSE)
+[![license](https://img.shields.io/pypi/l/dotlink.svg)](https://github.com/amyreese/dotlink/blob/main/LICENSE)
 [![version](https://img.shields.io/pypi/v/dotlink.svg)](https://pypi.org/project/dotlink)
-[![changelog](https://img.shields.io/badge/change-log-blue)](https://github.com/jreese/dotlink/blob/main/CHANGELOG.md)
-[![build status](https://github.com/jreese/dotlink/workflows/Build/badge.svg)](https://github.com/jreese/dotlink/actions)
+[![changelog](https://img.shields.io/badge/change-log-blue)](https://github.com/amyreese/dotlink/blob/main/CHANGELOG.md)
+[![build status](https://github.com/amyreese/dotlink/workflows/Build/badge.svg)](https://github.com/amyreese/dotlink/actions)
 [![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
@@ -93,18 +93,18 @@ path begins with "git://" or "git@", but you can also use `--git` to force this
 for non-standard URLs.  The following command will clone my public dotfile repo,
 and install it to your home directory:
 
-    $ dotlink git://github.com/jreese/dotfiles
+    $ dotlink git://github.com/amyreese/dotfiles
 
 This is essentially equivalent to the following sequence of commands:
 
-    $ git clone git://github.com/jreese/dotfiles
+    $ git clone git://github.com/amyreese/dotfiles
     $ dotlink dotfiles
     $ rm -rf dotfiles
 
 You can even combine remote sources with remote targets, to clone the dotfile
 repository locally, and then copy the dotfiles to the remote host via scp:
 
-    $ dotlink git://github.com/jreese/dotfiles jreese@devserver:
+    $ dotlink git://github.com/amyreese/dotfiles amyreese@devserver:
 
 
 todo
@@ -119,7 +119,7 @@ Some planned features and changes are:
 legal
 -----
 
-dotlink is copyright [John Reese](https://jreese.sh).
+dotlink is copyright [Amethyst Reese](https://noswap.com).
 
 dotlink is licensed under the MIT license.
 See the `LICENSE` file for more details.

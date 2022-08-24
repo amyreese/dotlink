@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright 2021 John Reese
+# Copyright 2022 Amethyst Reese
 # Licensed under the MIT license
 
 import argparse
@@ -21,7 +21,7 @@ class Dotlink(object):
     """Copy or symlink dotfiles from a profile repository to a new location,
     either a local path or a remote path accessible via ssh/scp.
 
-    See https://github.com/jreese/dotlink for more information."""
+    See https://github.com/amyreese/dotlink for more information."""
 
     @staticmethod
     def parse_args():
