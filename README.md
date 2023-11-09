@@ -65,14 +65,6 @@ providing a hostname as well as username if different than your current login.
 advanced
 --------
 
-### embedding
-
-If you'd like to embed dotlink within your dotfile repository,
-`dotlink/dotlink.py` is a self-contained script, specifically to allow for this
-use case.  Simply copy dotlink.py into your repository; it has no external
-dependencies.
-
-
 ### remote sources
 
 Sources can also point at remote locations, such as git repositories, and
