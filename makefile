@@ -17,11 +17,12 @@ release: lint test clean
 format:
 	python -m ufmt format $(srcs)
 
+test:
+	python -m mypy --non-interactive --install-types -p $(srcs)
+
 lint:
 	python -m flake8 $(srcs)
 	python -m ufmt check $(srcs)
-
-test:
 
 clean:
 	rm -rf build dist html README MANIFEST *.egg-info
