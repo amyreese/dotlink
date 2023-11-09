@@ -1,6 +1,8 @@
-#!/usr/bin/env python
-# Copyright 2022 Amethyst Reese
+# Copyright Amethyst Reese
 # Licensed under the MIT license
+
+# flake8: noqa
+# type: ignore
 
 import argparse
 import logging
@@ -14,146 +16,12 @@ from collections import OrderedDict
 from os import path
 from urllib.parse import urlparse
 
+import click
+
 from .__version__ import __version__ as VERSION
 
 
-class Dotlink(object):
-    """Copy or symlink dotfiles from a profile repository to a new location,
-    either a local path or a remote path accessible via ssh/scp.
-
-    See https://github.com/amyreese/dotlink for more information."""
-
-    @staticmethod
-    def parse_args():
-        parser = argparse.ArgumentParser(description=Dotlink.__doc__)
-        parser.add_argument(
-            "-V", "--version", action="version", version="dotlink v%s" % VERSION
-        )
-        parser.add_argument(
-            "-d",
-            "--debug",
-            action="store_true",
-            default=False,
-            help="enable debug output",
-        )
-        parser.add_argument(
-            "-c",
-            "--copy",
-            action="store_true",
-            default=False,
-            help="copy files rather than link",
-        )
-        parser.add_argument(
-            "-m",
-            "--map",
-            type=str,
-            default=None,
-            help="path to dotfile mapping YAML file",
-        )
-        parser.add_argument(
-            "--rsync",
-            action="store_true",
-            default=False,
-            help="use rsync rather than a tarball over scp",
-        )
-        parser.add_argument(
-            "--git",
-            action="store_true",
-            default=False,
-            help="treat the source path as a git repository",
-        )
-
-        parser.add_argument(
-            "source",
-            type=str,
-            nargs="?",
-            default=".",
-            help="path to root of source dotfile repository",
-        )
-        parser.add_argument(
-            "target",
-            type=str,
-            nargs="?",
-            default=None,
-            help="target path for dotfiles; either a local "
-            " path or a remote ssh/scp path. Examples:"
-            " /home/user server:some/path"
-            " user@server:some/path",
-        )
-
-        args = parser.parse_args()
-        args.repo = False
-
-        if args.map:
-            if not path.isfile(args.map):
-                parser.error("map file not found")
-            args.map = path.realpath(args.map)
-
-        if args.source:
-            # try to "guess" some basic/obvious source URI patterns
-            url = urlparse(args.source)
-            if url.scheme == "git" or args.source.startswith("git@"):
-                args.git = True
-
-        if args.git:
-            args.repo = True
-        elif args.source:
-            args.source = path.realpath(args.source)
-
-        if args.source and not args.repo:
-            # try to be nice and recognize if they're running from their source
-            # repository, and don't make them type "." if they specify a target
-            if not args.target and path.isfile("dotfiles") or path.isfile(".dotfiles"):
-                args.target = args.source
-                args.source = "."
-
-            elif not path.isdir(args.source):
-                parser.error("source dir not found")
-
-        if args.target:
-            match = re.match(
-                r"(?:(?:([a-zA-Z0-9]+)@)?([^:]+):)?((?:/?[^/])*)", args.target
-            )
-            if match:
-                args.user, args.server, args.path = match.groups()
-            else:
-                parser.error("target did not pass regex")
-
-        else:
-            args.user = None
-            args.server = None
-            args.path = os.path.expanduser("~")
-            args.target = args.path
-
-        if args.server or args.repo:
-            args.copy = True
-
-        return args
-
-    @staticmethod
-    def setup_logger(args):
-        logging.addLevelName(logging.DEBUG, "DBG")
-        logging.addLevelName(logging.INFO, "INF")
-        logging.addLevelName(logging.WARNING, "WRN")
-        logging.addLevelName(logging.ERROR, "ERR")
-
-        log = logging.getLogger()
-        log.setLevel(logging.DEBUG)
-
-        sh = logging.StreamHandler(sys.stdout)
-
-        if args.debug:
-            fm = logging.Formatter("%(levelname)s %(message)s")
-            sh.setLevel(logging.DEBUG)
-        else:
-            fm = logging.Formatter("%(message)s")
-            sh.setLevel(logging.INFO)
-
-        sh.setFormatter(fm)
-        log.addHandler(sh)
-
-        return log
-
+class Dotlink:
     def parse_mapping(self, map_path, source=None, dotfiles=None):
         """Do a simple parse of the dotfile mapping, using semicolons to
         separate source file name from the target file paths."""
@@ -275,7 +143,7 @@ class Dotlink(object):
 
     def __init__(self):
         self.args = Dotlink.parse_args()
-        self.log = Dotlink.setup_logger(self.args)
+        self.log = logging.getLogger(__name__)
 
     def run(self):
         """Start the dotfile deployment process."""
@@ -433,11 +301,3 @@ class Dotlink(object):
             else:
                 self.log.debug("Symlinking %s -> %s", target_path, source_path)
                 os.symlink(source_path, target_path)
-
-
-def main():
-    Dotlink().run()
-
-
-if __name__ == "__main__":
-    main()

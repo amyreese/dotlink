@@ -1,7 +1,7 @@
-# Copyright 2022 Amethyst Reese
+# Copyright Amethyst Reese
 # Licensed under the MIT license
 
-from dotlink import main
+from dotlink.cli import main
 
 if __name__ == "__main__":
-    main
+    main()
