@@ -250,7 +250,7 @@ class Dotlink(object):
             stderr=sys.stderr,
             stdin=sys.stdin,
             shell=True,
-            **kwargs
+            **kwargs,
         )
 
     def ssh(self, *command):
