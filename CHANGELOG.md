@@ -8,7 +8,7 @@ Fixed readme
 
 ```
 $ git shortlog -s v1.0...v1.0.post0
-     2	John Reese
+     2	Amethyst Reese
 ```
 
 
@@ -24,7 +24,7 @@ Modern release
 
 ```
 $ git shortlog -s v0.6.0...v1.0
-    14	John Reese
+    14	Amethyst Reese
 ```
 
 
@@ -38,7 +38,7 @@ feature: --rsync flag enables use of rsync for remote deployments
 
 ```
 $ git shortlog -s v0.5.0...v0.6.0
-     1	John Reese
+     1	Amethyst Reese
 ```
 
 
@@ -53,7 +53,7 @@ Feature release:
 
 ```
 $ git shortlog -s v0.4.3...v0.5.0
-     4	John Reese
+     4	Amethyst Reese
 ```
 
 
@@ -67,7 +67,7 @@ Bug fix release
 
 ```
 $ git shortlog -s v0.4.2...v0.4.3
-     1	John Reese
+     1	Amethyst Reese
 ```
 
 
@@ -80,7 +80,7 @@ Minor version bump
 
 ```
 $ git shortlog -s v0.4.1...v0.4.2
-     5	John Reese
+     5	Amethyst Reese
 ```
 
 
@@ -94,7 +94,7 @@ Bug fix release
 
 ```
 $ git shortlog -s v0.4.0...v0.4.1
-     5	John Reese
+     5	Amethyst Reese
 ```
 
 
@@ -108,7 +108,7 @@ v0.4.0
 
 ```
 $ git shortlog -s v0.3.1...v0.4.0
-     4	John Reese
+     4	Amethyst Reese
 ```
 
 
@@ -119,7 +119,7 @@ Bug fix release
 
 ```
 $ git shortlog -s v0.3.0...v0.3.1
-     4	John Reese
+     4	Amethyst Reese
 ```
 
 
@@ -130,7 +130,7 @@ Source path is now a positional argument.
 
 ```
 $ git shortlog -s v0.2.0...v0.3.0
-     2	John Reese
+     2	Amethyst Reese
 ```
 
 
@@ -141,6 +141,6 @@ No longer depends on YAML for parsing the dotfile mapping.
 
 ```
 $ git shortlog -s v0.2.0
-    17	John Reese
+    17	Amethyst Reese
 ```
 
