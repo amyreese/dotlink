@@ -9,26 +9,15 @@ mapping dotfile names in the repository to their ultimate location relative to
 the target path.  This allows you to have files without the dot prefix, for
 instance, or avoid replicating deep directory structures to track a single file.
 
-[![license](https://img.shields.io/pypi/l/dotlink.svg)](https://github.com/amyreese/dotlink/blob/main/LICENSE)
 [![version](https://img.shields.io/pypi/v/dotlink.svg)](https://pypi.org/project/dotlink)
 [![changelog](https://img.shields.io/badge/change-log-blue)](https://github.com/amyreese/dotlink/blob/main/CHANGELOG.md)
-[![build status](https://github.com/amyreese/dotlink/workflows/Build/badge.svg)](https://github.com/amyreese/dotlink/actions)
-[![code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![license](https://img.shields.io/pypi/l/dotlink.svg)](https://github.com/amyreese/dotlink/blob/main/LICENSE)
 
 
-setup
+install
 -----
 
-dotlink requires Python version 3.2 or newer.
-No external libraries are required.
-
-To install dotlink:
-
     $ pip install dotlink
-
-Or if you want to hack on dotlink a bit, clone the repo and run:
-
-    $ python setup.py develop
 
 
 usage
@@ -80,7 +69,7 @@ advanced
 
 If you'd like to embed dotlink within your dotfile repository,
 `dotlink/dotlink.py` is a self-contained script, specifically to allow for this
-use case.  Simply copy dotfile.py into your repository; it has no external
+use case.  Simply copy dotlink.py into your repository; it has no external
 dependencies.
 
 
@@ -105,15 +94,6 @@ You can even combine remote sources with remote targets, to clone the dotfile
 repository locally, and then copy the dotfiles to the remote host via scp:
 
     $ dotlink git://github.com/amyreese/dotfiles amyreese@devserver:
-
-
-todo
-----
-
-Some planned features and changes are:
-
-- Add support for remote sources, like ssh/scp, as well as git repos or tarballs
-- Generate mapping file from repository contents ?
 
 
 legal
