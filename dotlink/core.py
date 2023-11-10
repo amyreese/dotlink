@@ -11,7 +11,7 @@ from tempfile import TemporaryDirectory
 from typing import Generator
 
 from .actions import Action, Copy, Deploy, Plan, Symlink
-from .types import Config, InvalidPlan, Method, Options, Pair, Source, Target
+from .types import Config, InvalidPlan, Method, Pair, Source, Target
 from .util import run
 
 LOG = logging.getLogger(__name__)

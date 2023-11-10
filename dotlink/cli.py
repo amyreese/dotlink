@@ -10,7 +10,7 @@ import click
 
 from .__version__ import __version__
 from .core import dotlink
-from .types import Method, Options, Source, Target
+from .types import Method, Source, Target
 
 LOG = logging.getLogger(__name__)
 

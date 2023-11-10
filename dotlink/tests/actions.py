@@ -215,3 +215,6 @@ class ActionsTest(TestCase):
                     RuntimeError, "symlink destination .+ is a directory"
                 ):
                     action.prepare()
+
+    def test_deploy(self) -> None:
+        assert Deploy is Deploy  # TODO
