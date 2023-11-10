@@ -8,7 +8,7 @@ from unittest import TestCase
 from unittest.mock import Mock, patch
 
 from dotlink import core
-from dotlink.types import InvalidPlan, Plan
+from dotlink.types import Config, InvalidPlan
 
 
 class CoreTest(TestCase):
@@ -53,27 +53,27 @@ class CoreTest(TestCase):
         ):
             f.write_text("\n")
 
-    def test_discover_mapping(self) -> None:
+    def test_discover_config(self) -> None:
         for root, expected in (
             (self.dir, self.dir / ".dotlink"),
             (self.inner, self.inner / "dotlink"),
         ):
             with self.subTest(root):
-                assert core.discover_mapping(root) == expected
+                assert core.discover_config(root) == expected
 
-    def test_generate_plan(self) -> None:
+    def test_generate_config(self) -> None:
         with self.subTest("inner"):
-            expected = Plan(
+            expected = Config(
                 root=self.inner,
                 paths={
                     Path("Brewfile"): Path("Brewfile"),
                     Path(".zshrc"): Path(".zshrc"),
                 },
             )
-            assert core.generate_plan(self.inner) == expected
+            assert core.generate_config(self.inner) == expected
 
         with self.subTest("outer"):
-            expected = Plan(
+            expected = Config(
                 root=self.dir,
                 paths={
                     Path(".gitignore"): Path("gitignore"),
@@ -81,7 +81,7 @@ class CoreTest(TestCase):
                     Path(".zshrc"): Path(".zshrc"),
                 },
                 includes=[
-                    Plan(
+                    Config(
                         root=self.inner,
                         paths={
                             Path("Brewfile"): Path("Brewfile"),
@@ -90,24 +90,24 @@ class CoreTest(TestCase):
                     )
                 ],
             )
-            assert core.generate_plan(self.dir) == expected
+            assert core.generate_config(self.dir) == expected
 
         with self.subTest("empty"):
             (self.dir / "empty").mkdir()
             with self.assertRaisesRegex(FileNotFoundError, "no dotlink mapping found"):
-                core.generate_plan(self.dir / "empty")
+                core.generate_config(self.dir / "empty")
 
         with self.subTest("include file"):
             (self.dir / "invalid").mkdir()
             (self.dir / "invalid" / "foo").write_text("\n")
             (self.dir / "invalid" / "dotlink").write_text("@foo\n")
             with self.assertRaisesRegex(InvalidPlan, "foo is a file"):
-                core.generate_plan(self.dir / "invalid")
+                core.generate_config(self.dir / "invalid")
 
         with self.subTest("include missing"):
             (self.dir / "invalid" / "dotlink").write_text("@bar\n")
             with self.assertRaisesRegex(InvalidPlan, "bar not found"):
-                core.generate_plan(self.dir / "invalid")
+                core.generate_config(self.dir / "invalid")
 
     @patch("dotlink.core.run")
     def test_prepare_source(self, run_mock: Mock) -> None:

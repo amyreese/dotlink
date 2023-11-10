@@ -7,11 +7,10 @@ import logging
 import sys
 
 import click
-from rich import print
 
 from .__version__ import __version__
-from .core import generate_plan, prepare_source
-from .types import Options, Source, Target
+from .core import dotlink
+from .types import Method, Options, Source, Target
 
 LOG = logging.getLogger(__name__)
 
@@ -20,19 +19,22 @@ LOG = logging.getLogger(__name__)
 @click.version_option(__version__, "--version", "-V")
 @click.option("--debug", "-D", is_flag=True, help="enable debug output")
 @click.option(
-    "--copy / --symlink",
-    help="choose to copy or symlink files for local targets (default: symlink)",
+    "--dry-run",
+    "--plan",
+    is_flag=True,
+    help="print planned actions without executing",
 )
 @click.option(
-    "--rsync / --scp",
-    help="choose to rsync or scp files for remote targets (default: scp)",
+    "--symlink / --copy",
+    default=True,
+    help="use symlinks or copies (default symlink)",
 )
 @click.argument("source", required=False, default=".")
 @click.argument("target")
 def main(
     debug: bool,
-    copy: bool,
-    rsync: bool,
+    dry_run: bool,
+    symlink: bool,
     source: str,
     target: str,
 ) -> None:
@@ -52,14 +54,14 @@ def main(
         stream=sys.stderr,
     )
 
-    options = Options(
+    plan = dotlink(
         source=Source.parse(source),
         target=Target.parse(target),
-        copy=copy,
-        rsync=rsync,
+        method=Method.symlink if symlink else Method.copy,
     )
-    LOG.debug("%r", options)
 
-    root = prepare_source(options.source)
-    plan = generate_plan(root)
-    print(plan)
+    if dry_run:
+        print(plan)
+    else:
+        for action in plan.execute():
+            print(action)

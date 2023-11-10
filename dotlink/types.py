@@ -5,8 +5,9 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from enum import auto, Enum
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, Tuple
 from urllib.parse import urlparse
 
 from typing_extensions import Self, TypeAlias
@@ -22,6 +23,7 @@ USER_HOST_REGEX = re.compile(
     re.X,
 )
 
+Pair: TypeAlias = Tuple[Path, Path]
 URL: TypeAlias = str
 
 
@@ -29,11 +31,16 @@ class InvalidPlan(ValueError):
     ...
 
 
+class Method(Enum):
+    symlink = auto()
+    copy = auto()
+
+
 @dataclass(frozen=True)
-class Plan:
+class Config:
     root: Path
     paths: Mapping[Path, Path] = field(default_factory=dict)
-    includes: Sequence[Plan] = field(default_factory=list)
+    includes: Sequence[Config] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -56,6 +63,19 @@ class Target:
     host: str | None = None
     user: str | None = None
 
+    @property
+    def remote(self) -> bool:
+        return self.host is not None
+
+    def __str__(self) -> str:
+        if self.host:
+            if self.user:
+                return f"{self.user}@{self.host}:{self.path}"
+            else:
+                return f"{self.host}:{self.path}"
+        else:
+            return self.path.as_posix()
+
     @classmethod
     def parse(cls, value: str) -> Self:
         if match := USER_HOST_REGEX.match(value):
@@ -70,7 +90,9 @@ class Target:
 
 @dataclass(frozen=True)
 class Options:
-    source: Source
-    target: Target
-    copy: bool
-    rsync: bool
+    dry_run: bool
+
+
+@dataclass(frozen=True)
+class Result:
+    error: bool = False
