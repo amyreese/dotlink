@@ -6,6 +6,7 @@ from __future__ import annotations
 import logging
 import platform
 import sys
+from pathlib import Path
 
 import click
 
@@ -31,7 +32,7 @@ LOG = logging.getLogger(__name__)
     help="use symlinks or copies (default symlink)",
 )
 @click.argument("source", required=False, default=".")
-@click.argument("target")
+@click.argument("target", required=False, default=Path.home().as_posix())
 @click.pass_context
 def main(
     ctx: click.Context,
@@ -49,6 +50,7 @@ def main(
     Defaults to current working directory.
 
     Target must be a local path or remote SSH/SCP destination [[user@]host:path].
+    Defaults to the user's home directory.
 
     See https://github.com/amyreese/dotlink for more information.
     """
