@@ -2,9 +2,10 @@
 # Licensed under the MIT license
 
 import os
+import platform
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest import TestCase
+from unittest import skipIf, TestCase
 
 from ..actions import Action, Copy, Deploy, Plan, Symlink
 
@@ -145,6 +146,7 @@ class ActionsTest(TestCase):
                 with self.assertRaisesRegex(RuntimeError, "file/dir type mismatch"):
                     action.prepare()
 
+    @skipIf(platform.system() == "Windows", "symlinks unsupported on windows")
     def test_symlink(self) -> None:
         with TemporaryDirectory() as td:
             tdp = Path(td).resolve()

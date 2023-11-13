@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+import platform
 import sys
 
 import click
@@ -31,7 +32,9 @@ LOG = logging.getLogger(__name__)
 )
 @click.argument("source", required=False, default=".")
 @click.argument("target")
+@click.pass_context
 def main(
+    ctx: click.Context,
     debug: bool,
     dry_run: bool,
     symlink: bool,
@@ -53,6 +56,9 @@ def main(
         level=(logging.DEBUG if debug else logging.WARNING),
         stream=sys.stderr,
     )
+
+    if symlink and platform.system() == "Windows":
+        ctx.fail("symlinks not supported on Windows, use --copy")
 
     plan = dotlink(
         source=Source.parse(source),
