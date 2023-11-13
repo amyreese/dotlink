@@ -18,6 +18,7 @@ format:
 	python -m ufmt format $(srcs)
 
 test:
+	python -m pytest
 	python -m mypy --non-interactive --install-types -p $(srcs)
 
 lint:
