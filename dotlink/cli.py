@@ -73,3 +73,4 @@ def main(
     else:
         for action in plan.execute():
             print(action)
+        print("done")
