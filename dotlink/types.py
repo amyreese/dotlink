@@ -67,6 +67,10 @@ class Target:
     def remote(self) -> bool:
         return self.host is not None
 
+    @property
+    def address(self) -> str:
+        return f"{self.user}@{self.host}" if self.user else (self.host or "")
+
     def __str__(self) -> str:
         if self.host:
             if self.user:

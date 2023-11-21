@@ -3,13 +3,18 @@
 
 from __future__ import annotations
 
+import logging
 import shutil
-
+import tarfile
 from dataclasses import dataclass
+from io import BytesIO
 from pathlib import Path
 from typing import Any, Generator
 
 from .types import Target
+from .util import run
+
+LOG = logging.getLogger(__name__)
 
 
 @dataclass
@@ -95,3 +100,33 @@ class Deploy(Action):
 
     def print(self) -> str:
         return f"{self.src} -> {self.target}"
+
+
+class SSHTarball(Deploy):
+    def prepare(self) -> None:
+        if not self.src.is_dir():
+            raise RuntimeError(f"{self.src} is not a directory")
+
+        if not self.target.remote:
+            raise ValueError(f"target {self.target} is not remote")
+
+    def execute(self) -> None:
+        stream = BytesIO()
+        with tarfile.open(mode="w|gz", fileobj=stream) as tf:
+            tf.add(self.src, arcname=".")
+
+        stream.seek(0)
+        self.data = stream.read()
+        LOG.debug("tarball compressed size %d bytes", len(self.data))
+
+        run(
+            "ssh",
+            self.target.address,
+            "tar",
+            "-xz",
+            "-f-",
+            "-C",
+            self.target.path.as_posix(),
+            input=self.data,
+            encoding=None,
+        )

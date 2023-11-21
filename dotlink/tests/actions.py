@@ -3,11 +3,15 @@
 
 import os
 import platform
+import tarfile
+from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import skipIf, TestCase
+from unittest.mock import Mock, patch
 
-from ..actions import Action, Copy, Deploy, Plan, Symlink
+from ..actions import Action, Copy, Deploy, Plan, SSHTarball, Symlink
+from ..types import Target
 
 CONTENT = "hello world\n"
 
@@ -220,3 +224,70 @@ class ActionsTest(TestCase):
 
     def test_deploy(self) -> None:
         assert Deploy is Deploy  # TODO
+
+    @patch("dotlink.actions.run")
+    def test_sshtarball(self, run_mock: Mock) -> None:
+        with TemporaryDirectory() as td:
+            tdp = Path(td).resolve()
+
+            with self.subTest("host"):
+                (tdp / "one").write_text(CONTENT)
+                (tdp / "foo").mkdir()
+                (tdp / "foo" / "bar").write_text(CONTENT)
+
+                action = SSHTarball(tdp, Target(Path("/target"), host="localhost"))
+                action.prepare()
+                action.execute()
+
+                run_mock.assert_called_once_with(
+                    "ssh",
+                    "localhost",
+                    "tar",
+                    "-xz",
+                    "-f-",
+                    "-C",
+                    "/target",
+                    input=action.data,
+                    encoding=None,
+                )
+                run_mock.reset_mock()
+
+                stream = BytesIO(action.data)
+                with tarfile.open("r|gz", fileobj=stream) as tf:
+                    assert tf.getnames() == [
+                        ".",
+                        "./foo",
+                        "./foo/bar",
+                        "./one",
+                    ]
+
+            with self.subTest("user@host"):
+                action = SSHTarball(
+                    tdp, Target(Path("/target"), host="localhost", user="nobody")
+                )
+                action.prepare()
+                action.execute()
+
+                run_mock.assert_called_once_with(
+                    "ssh",
+                    "nobody@localhost",
+                    "tar",
+                    "-xz",
+                    "-f-",
+                    "-C",
+                    "/target",
+                    input=action.data,
+                    encoding=None,
+                )
+                run_mock.reset_mock()
+
+            with self.subTest("file"):
+                (afile := tdp / "afile").write_text("\n")
+                action = SSHTarball(afile, Target(Path("/foo"), host="localhost"))
+                with self.assertRaisesRegex(RuntimeError, "afile is not a directory"):
+                    action.prepare()
+
+            with self.subTest("local target"):
+                action = SSHTarball(tdp, Target(Path("/foo")))
+                with self.assertRaisesRegex(ValueError, "target /foo is not remote"):
+                    action.prepare()

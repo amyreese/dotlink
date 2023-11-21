@@ -11,5 +11,7 @@ from typing import Any
 def run(*cmd: str, **kwargs: Any) -> subprocess.CompletedProcess[str]:
     print(f"$ {shlex.join(cmd)}")
 
-    proc = subprocess.run(cmd, encoding="utf-8", check=True, **kwargs)
+    kwargs.setdefault("encoding", "utf-8")
+    kwargs.setdefault("check", True)
+    proc = subprocess.run(cmd, **kwargs)
     return proc

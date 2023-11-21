@@ -10,7 +10,7 @@ from pprint import pformat
 from tempfile import TemporaryDirectory
 from typing import Generator
 
-from .actions import Action, Copy, Deploy, Plan, Symlink
+from .actions import Action, Copy, Plan, SSHTarball, Symlink
 from .types import Config, InvalidPlan, Method, Pair, Source, Target
 from .util import run
 
@@ -111,7 +111,7 @@ def resolve_actions(config: Config, target: Target, method: Method) -> list[Acti
         raise ValueError(f"unknown {method = !r}")
 
     if target.remote:
-        actions += [Deploy(staging, target)]
+        actions += [SSHTarball(staging, target)]
 
     return actions
 
