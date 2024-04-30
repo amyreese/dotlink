@@ -4,5 +4,4 @@
 from unittest import TestCase
 
 
-class SmokeTest(TestCase):
-    ...
+class SmokeTest(TestCase): ...
