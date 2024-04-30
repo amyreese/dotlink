@@ -10,9 +10,11 @@ from pprint import pformat
 from tempfile import TemporaryDirectory
 from typing import Generator
 
+from platformdirs import user_cache_dir
+
 from .actions import Action, Copy, Plan, SSHTarball, Symlink
 from .types import Config, InvalidPlan, Method, Pair, Source, Target
-from .util import run
+from .util import run, sha1
 
 LOG = logging.getLogger(__name__)
 SUPPORTED_MAPPING_NAMES = (".dotlink", "dotlink")
@@ -42,7 +44,17 @@ def generate_config(root: Path) -> Config:
             continue
 
         if line.startswith(INCLUDE):
-            subpath = root / line[1:]
+            subsource = Source.parse(line[1:], root=root)
+            if subsource.path:
+                try:
+                    assert subsource.path.relative_to(root)
+                except ValueError as e:
+                    raise InvalidPlan(
+                        f"non-relative include paths not allowed ({line!r} given)"
+                    ) from e
+
+            subpath = prepare_source(subsource)
+
             if subpath.is_dir():
                 includes.append(generate_config(subpath))
             elif subpath.is_file():
@@ -64,17 +76,57 @@ def generate_config(root: Path) -> Config:
     )
 
 
+def repo_cache_dir(source: Source) -> Path:
+    assert source.url is not None
+    if source.ref:
+        key = f"{sha1(source.url)}-{source.stem}-{source.ref}"
+    else:
+        key = f"{sha1(source.url)}-{source.stem}"
+    cache_dir = Path(user_cache_dir("dotlink")) / key
+    return cache_dir
+
+
 def prepare_source(source: Source) -> Path:
     if source.path:
         return source.path.resolve()
 
     if source.url:
         # assume this is a git repo
-        tmp = TemporaryDirectory(prefix="dotlink.")
-        atexit.register(tmp.cleanup)
-        repo = Path(tmp.name).resolve()
-        run("git", "clone", "--depth=1", source.url, repo.as_posix())
-        return repo
+        repo_dir = repo_cache_dir(source)
+        if not repo_dir.is_dir():
+            repo_dir.mkdir(parents=True, exist_ok=True)
+            run("git", "clone", "--depth=1", source.url, repo_dir.as_posix())
+
+        if source.ref:
+            run(
+                "git",
+                "-C",
+                repo_dir.as_posix(),
+                "fetch",
+                "--force",
+                "--update-head-ok",
+                "--depth=1",
+                "origin",
+                f"{source.ref}:{source.ref}",
+            )
+            run(
+                "git",
+                "-C",
+                repo_dir.as_posix(),
+                "checkout",
+                "--force",
+                source.ref,
+            )
+        else:
+            run(
+                "git",
+                "-C",
+                repo_dir.as_posix(),
+                "pull",
+                "--ff-only",
+            )
+
+        return repo_dir
 
     raise RuntimeError("unknown source value")
 
@@ -95,7 +147,7 @@ def resolve_actions(config: Config, target: Target, method: Method) -> list[Acti
     actions: list[Action] = []
 
     if target.remote:
-        td = TemporaryDirectory(prefix="dotlink.")
+        td = TemporaryDirectory(prefix="dotlink-target-")
         atexit.register(td.cleanup)
         staging = Path(td.name).resolve()
         pairs = resolve_paths(config, staging)

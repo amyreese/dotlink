@@ -13,3 +13,12 @@ class UtilTest(TestCase):
         assert python
         result = util.run(python, "-c", 'print("hello world")', capture_output=True)
         assert result.stdout == "hello world\n"
+
+    def test_sha1(self) -> None:
+        for value, expected in (
+            ("", "da39"),
+            ("hello", "aaf4"),
+            ("https://github.com/amyreese/dotfiles", "01de"),
+        ):
+            with self.subTest(value):
+                self.assertEqual(expected, util.sha1(value))

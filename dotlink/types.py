@@ -46,14 +46,23 @@ class Config:
 class Source:
     path: Path | None = None
     url: URL | None = None
+    ref: str = ""
+    stem: str = ""
 
     @classmethod
-    def parse(cls, value: str) -> Self:
+    def parse(cls, value: str, root: Path | None = None) -> Self:
         url = urlparse(value)
         if url.scheme and url.netloc:
-            return cls(url=URL(value))
+            return cls(
+                url=URL(url._replace(fragment="").geturl()),
+                ref=url.fragment,
+                stem=Path(url.path).stem,
+            )
+        path = Path(value)
+        if root:
+            return cls(path=root / path, stem=path.stem)
         else:
-            return cls(path=Path(value))
+            return cls(path=path, stem=path.stem)
 
 
 @dataclass(frozen=True)

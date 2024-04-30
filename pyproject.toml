@@ -18,6 +18,7 @@ dynamic = ["version", "description"]
 requires-python = ">=3.8"
 dependencies = [
     "click >= 8",
+    "platformdirs >= 4",
     "typing_extensions >= 4",
 ]
 
