@@ -27,8 +27,7 @@ Pair: TypeAlias = Tuple[Path, Path]
 URL: TypeAlias = str
 
 
-class InvalidPlan(ValueError):
-    ...
+class InvalidPlan(ValueError): ...
 
 
 class Method(Enum):
