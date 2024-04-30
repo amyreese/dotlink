@@ -8,7 +8,7 @@ from unittest import TestCase
 from unittest.mock import Mock, patch
 
 from dotlink import core
-from dotlink.types import Config, InvalidPlan
+from dotlink.types import Config, InvalidPlan, Source
 
 
 class CoreTest(TestCase):
@@ -108,6 +108,34 @@ class CoreTest(TestCase):
             (self.dir / "invalid" / "dotlink").write_text("@bar\n")
             with self.assertRaisesRegex(InvalidPlan, "bar not found"):
                 core.generate_config(self.dir / "invalid")
+
+    @patch("dotlink.core.user_cache_dir")
+    def test_repo_cache_dir(self, ucd_mock: Mock) -> None:
+        with TemporaryDirectory() as td:
+            tdp = Path(td) / "dotlink"
+            ucd_mock.return_value = tdp.as_posix()
+
+            for source_str, expected in (
+                ("", None),
+                ("foo/bar", None),
+                ("https://github.com/amyreese/dotfiles.git", tdp / "d45a-dotfiles"),
+                (
+                    "https://github.com/amyreese/dotfiles.git#feature-branch",
+                    tdp / "d45a-dotfiles-feature-branch",
+                ),
+                ("https://github.com/actions/checkout", tdp / "0f8a-checkout"),
+                (
+                    "https://github.com/actions/checkout#main",
+                    tdp / "0f8a-checkout-main",
+                ),
+            ):
+                with self.subTest(source_str):
+                    source = Source.parse(source_str)
+                    if expected is None:
+                        with self.assertRaises(AssertionError):
+                            core.repo_cache_dir(source)
+                    else:
+                        self.assertEqual(expected, core.repo_cache_dir(source))
 
     @patch("dotlink.core.run")
     def test_prepare_source(self, run_mock: Mock) -> None:

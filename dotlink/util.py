@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import hashlib
+
 import shlex
 import subprocess
 from typing import Any
@@ -15,3 +17,8 @@ def run(*cmd: str, **kwargs: Any) -> subprocess.CompletedProcess[str]:
     kwargs.setdefault("check", True)
     proc = subprocess.run(cmd, **kwargs)
     return proc
+
+
+def sha1(value: str) -> str:
+    k = hashlib.sha1(value.encode("utf-8"))
+    return k.hexdigest()[:4]

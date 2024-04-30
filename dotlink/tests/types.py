@@ -12,9 +12,26 @@ class TypesTest(TestCase):
         for value, expected in (
             ("", Source(path=Path(""))),
             (".", Source(path=Path("."))),
-            ("/foo/bar", Source(path=Path("/foo/bar"))),
-            ("git://github.com/a/b", Source(url="git://github.com/a/b")),
-            ("https://github.com/a/b.git", Source(url="https://github.com/a/b.git")),
+            (
+                "/foo/bar",
+                Source(path=Path("/foo/bar"), stem="bar"),
+            ),
+            (
+                "git://github.com/a/b",
+                Source(url="git://github.com/a/b", stem="b"),
+            ),
+            (
+                "https://github.com/a/b.git",
+                Source(url="https://github.com/a/b.git", stem="b"),
+            ),
+            (
+                "git://github.com/a/b#main",
+                Source(url="git://github.com/a/b", stem="b", ref="main"),
+            ),
+            (
+                "https://github.com/a/b.git#abc123",
+                Source(url="https://github.com/a/b.git", stem="b", ref="abc123"),
+            ),
         ):
             with self.subTest(value):
                 assert Source.parse(value) == expected
