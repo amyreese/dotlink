@@ -30,7 +30,7 @@ dev = [
     "mypy==1.10.0",
     "pytest==8.2.0",
     "usort==1.0.8.post1",
-    "ufmt==2.3.0",
+    "ufmt==2.5.1",
 ]
 
 [project.scripts]
