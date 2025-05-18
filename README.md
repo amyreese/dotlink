@@ -11,7 +11,7 @@ Automate deployment of dotfiles to local paths or remote hosts
 install
 -------
 
-    $ pipx install dotlink
+    $ uvx dotlink
 
 
 usage
